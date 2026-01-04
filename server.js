@@ -22,6 +22,11 @@ const posts = [
         { username: 'Bob', title: 'Third Post' }
     ];
 
+
+// Login logic will be consolidated from here to authServer.js 
+// This endpoint will only have posts related logic
+// Here will be only get authenticateToken only 
+
 // v1 posts route without authentication
 // app.get('/posts', (req, res) => {    
 //     res.json(posts);    
@@ -30,26 +35,6 @@ const posts = [
 // v2 posts route with authentication
 app.get('/posts', authenticateToken, (req, res) => {    
     res.json(posts.filter(post => post.username === req.user.name));
-});
-
-
-
-// Login logic will go here maybe from front end
-// For now, we'll just create a token
-// Generate these tokens using the following commands in Node.js REPL 
-// The Node.js Read-Eval-Print-Loop (REPL) is an interactive shell that processes Node.js expressions
-// to set them as environment variables
-// > require('crypto').randomBytes(64).toString('hex')
-// > require('crypto').randomBytes(64).toString('hex')
-app.post('/login', (req, res) => {
-    const username = req.body.username;
-    const user = { name: username };
-    const accessToken = jwt.sign(
-        user,
-        process.env.ACCESS_TOKEN_SECRET, 
-        { expiresIn: process.env.expiresIn });
-    //
-    res.json({ accessToken: accessToken });
 });
 
 // v2 Add middleware to verify token
