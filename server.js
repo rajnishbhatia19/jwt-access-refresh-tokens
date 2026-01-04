@@ -22,30 +22,53 @@ const posts = [
         { username: 'Bob', title: 'Third Post' }
     ];
 
-app.get('/posts', (req, res) => {    
-    res.json(posts);    
+// v1 posts route without authentication
+// app.get('/posts', (req, res) => {    
+//     res.json(posts);    
+// }); 
+
+// v2 posts route with authentication
+app.get('/posts', authenticateToken, (req, res) => {    
+    res.json(posts.filter(post => post.username === req.user.name));
 });
 
-app.post('/login', (req, res) => {
-    // Login logic will go here maybe from front end
-    // For now, we'll just create a token
-    // Generate these tokens using the following commands in Node.js REPL 
-    // The Node.js Read-Eval-Print-Loop (REPL) is an interactive shell that processes Node.js expressions
-    // to set them as environment variables
-    // > require('crypto').randomBytes(64).toString('hex')
-    // > require('crypto').randomBytes(64).toString('hex')
 
+
+// Login logic will go here maybe from front end
+// For now, we'll just create a token
+// Generate these tokens using the following commands in Node.js REPL 
+// The Node.js Read-Eval-Print-Loop (REPL) is an interactive shell that processes Node.js expressions
+// to set them as environment variables
+// > require('crypto').randomBytes(64).toString('hex')
+// > require('crypto').randomBytes(64).toString('hex')
+app.post('/login', (req, res) => {
     const username = req.body.username;
     const user = { name: username };
     const accessToken = jwt.sign(
         user,
-        process.env.ACCESS_TOKEN_SECRET
-        , { expiresIn: process.env.expiresIn });
+        process.env.ACCESS_TOKEN_SECRET, 
+        { expiresIn: process.env.expiresIn });
     //
-    res.json({ 'accessToken': accessToken });
+    res.json({ accessToken: accessToken });
 });
+
+// v2 Add middleware to verify token
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (token == null) return res.sendStatus(401); // if there isn't any token
+
+    // (err, user) => {} is a callback function
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403); // if token is no longer valid
+        req.user = user;
+        next(); // pass the execution off to whatever request the client intended
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     });
 
+//vCode=mbsmsi7l3r4

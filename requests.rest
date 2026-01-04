@@ -1,10 +1,11 @@
-GET http://localhost:3000/
+// GET http://localhost:3000/
 
 ### 
-GET http://localhost:3000/posts
+//GET http://localhost:3000/posts
 
-###
+### 
 GET http://localhost:3000/login
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiS3lsZSIsImlhdCI6MTc2NzUwNTE0MiwiZXhwIjoxNzY3NTA2MzQyfQ.nDiSmPoWqLZ_gUzhHxfOpM14rS5_sm7rYsUWXeH4WvU
 
 ###
 POST http://localhost:3000/login
